@@ -10,9 +10,24 @@
         <ul>
             <li>Username : {{request.user.username}}</li>
             <li>Email : {{request.user.email}}</li>
-            <li>You mail will be here:</li>
+            <li>You mail will be here:
+                <ul>
+                    {% for i in mails %}
+                    <ol>
+                        <li>Mail from : {{i.mail_from}}</li>
+                        <li>Mail : {{i.mail}}</li>
+                        <li>Mail to {{i.email_to}}</li>
+                        <hr>
+                    </ol>
+                    {% endfor %}
+                </ul>
+            </li>
         </ul>
     </div>
     <a href="{% url 'emailapp:login_views' %}">Log out</a>
+    <div>
+        <h1>Here you can send mail</h1>
+        <a href="{% url 'emailapp:mail' %}">Go</a>
+    </div>
 </body>
 </html>

@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django import forms
 from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.models import User
 from django.urls import reverse
 from emailapp.models import Mail
+from django.contrib.auth.models import User
 
 class InForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Username"}))
@@ -12,10 +12,13 @@ class InForm(forms.Form):
 
 class UpForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Username"}))
-    email = forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Email"}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={"placeholder":"Email"}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder":"Password"}))
 
-
+class MessageForm(forms.Form):
+    emailfrom = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder":"Your email"}))
+    mail = forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Write you mail"}))
+    emailto = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder":"Where you want send mail"}))
 # Create your views here.
 def index(request):
     return render(request,'emailapp/mainpage.html')
@@ -61,11 +64,27 @@ def signup(request):
     })
 
 def userpage(request):
-    return render(request,'emailapp/userpage.html')
+    return render(request,'emailapp/userpage.html',{
+        "mails":Mail.objects.filter(email_to=request.user.email)|Mail.objects.filter(mail_from=request.user.email)
+    })
 
 def login_views(request):
     logout(request)
     return render(request,'emailapp/signin.html',{
         "message":"was logged out",
         "inform":InForm()
+    })
+
+def send_message(request):
+    if request.method == "GET":
+        form = MessageForm(request.GET)
+        if form.is_valid():
+            mf = form.cleaned_data["emailfrom"]
+            m = form.cleaned_data["mail"]
+            mt = form.cleaned_data["emailto"]
+            newmail = Mail(email_to=mt,mail=m,mail_from=mf)
+            newmail.save()
+            return HttpResponseRedirect(reverse('emailapp:userpage'))
+    return render(request,'emailapp/mmail.html',{
+        "mform":MessageForm()
     })

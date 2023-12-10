@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail</title>
+</head>
+<body>
+    <h1 style="text-align: center;">Send yourr mail here</h1>
+    <form action="{% url 'emailapp:mail' %}" method="get">
+        {% csrf_token %}
+        {{mform}}
+        <input type="submit" value="Send mail">
+    </form>
+    <a href="{% url 'emailapp:userpage' %}">Go to userpage</a>
+</body>
+</html>
