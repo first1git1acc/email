@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in</title>
+</head>
+<body>
+   <h1 style="text-align: center;">Sign in</h1> 
+   <form action="{% url 'emailapp:signin' %}" method="post">
+    {% csrf_token %}
+    {{inform}}
+    <input type="submit" value="Sign in">
+   </form>
+
+   {% if error %}
+   <h1>{{error}}</h1>
+   <a href="{% url 'emailapp:signup' %}">Sign up here</a>
+   {% endif %}
+
+   {% if message %}
+   <h1>{{message}}</h1>
+   {% endif %}
+</body>
+</html>
